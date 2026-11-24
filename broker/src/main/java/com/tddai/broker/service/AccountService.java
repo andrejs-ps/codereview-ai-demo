@@ -69,7 +69,7 @@ public class AccountService {
         if (view.portfolio().cashBalance(currency).isPresent()) {
             throw new BalanceAlreadyOpenException(currency.name());
         }
-        if (currency != Currency.EUR) {
+        if(currency != Currency.EUR) { // test
             throw new InvalidRequestException("Only an EUR balance can be opened");
         }
         Portfolio updated = view.portfolio().withCashBalance(new CashBalance(BigDecimal.ZERO, currency));
