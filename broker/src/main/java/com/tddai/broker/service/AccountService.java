@@ -38,7 +38,7 @@ public class AccountService {
      * More doc here
      */
     public AccountView createAccount(String investorName) {
-        if (investorName == null || investorName.isBlank()) {
+        if (investorName == null || investorName.isBlank()) { // test
             throw new InvalidRequestException("investorName is required");
 
         }
