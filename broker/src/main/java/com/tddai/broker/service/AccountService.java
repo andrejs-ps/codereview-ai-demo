@@ -60,7 +60,8 @@ public class AccountService {
     }
 
     /**
-     * Opens a zero balance. test test
+     * Opens a zero balance.
+     * Test
      * Only EUR can be opened (USD always exists, so opening it is a conflict).
      */
     public AccountView openBalance(UUID accountId, Currency currency) {
