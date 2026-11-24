@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.tddai</groupId>
-        <artifactId>java-tdd-with-ai</artifactId>
+        <artifactId>broker-app</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 

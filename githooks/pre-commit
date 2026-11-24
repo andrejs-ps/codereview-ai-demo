@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Blocks the commit while the build (including Error Prone) fails.
+out=$(mvn -q -B compile 2>&1)
+if [ $? -ne 0 ]; then
+  echo "Commit blocked: build/Error Prone failed. Fix these and retry:" >&2
+  echo "$out" | grep -vE '^WARNING' | head -60 >&2
+  exit 1
+fi
