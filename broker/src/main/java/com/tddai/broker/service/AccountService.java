@@ -1,10 +1,10 @@
 package com.tddai.broker.service;
 
-import com.tddai.broker.domain.account.Account;
-import com.tddai.broker.domain.portfolio.CashBalance;
 import com.tddai.broker.domain.Currency;
-import com.tddai.broker.domain.portfolio.Portfolio;
+import com.tddai.broker.domain.account.Account;
 import com.tddai.broker.domain.account.Investor;
+import com.tddai.broker.domain.portfolio.CashBalance;
+import com.tddai.broker.domain.portfolio.Portfolio;
 import com.tddai.broker.error.AccountNotFoundException;
 import com.tddai.broker.error.BalanceAlreadyOpenException;
 import com.tddai.broker.error.BalanceNotFoundException;
@@ -35,12 +35,17 @@ public class AccountService {
 
     /**
      * One new investor with exactly one account, starting with an empty USD balance.
+     * More doc here
      */
     public AccountView createAccount(String investorName) {
         if (investorName == null || investorName.isBlank()) {
             throw new InvalidRequestException("investorName is required");
+
         }
-        Account account = new Account(UUID.randomUUID(), new Investor(UUID.randomUUID(), investorName.trim()));
+        Account account = new Account(UUID.randomUUID(),
+                new Investor(UUID.randomUUID(), investorName.trim())
+
+        );
         Portfolio portfolio = new Portfolio(account.id(), List.of(new CashBalance(BigDecimal.ZERO, Currency.USD)), List.of());
         portfolioStore.createAccount(account, portfolio);
         return new AccountView(account, portfolio);
@@ -55,7 +60,7 @@ public class AccountService {
     }
 
     /**
-     * Opens a zero balance.
+     * Opens a zero balance. test
      * Only EUR can be opened (USD always exists, so opening it is a conflict).
      */
     public AccountView openBalance(UUID accountId, Currency currency) {
