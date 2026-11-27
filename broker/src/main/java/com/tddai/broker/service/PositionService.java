@@ -56,8 +56,8 @@ public class PositionService {
                 .toList();
     }
 
-    //    // triggers error_prone
-    //    boolean same(int[] a, int[] b) {
-    //        return a.equals(b);
-    //    }
+        // triggers error_prone
+        boolean same(int[] a, int[] b) {
+            return a.equals(b);
+        }
 }
