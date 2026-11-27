@@ -26,6 +26,10 @@
         <restassured.version>6.0.1</restassured.version>
         <slf4j.version>2.0.20</slf4j.version>
         <errorprone.version>2.53.0</errorprone.version>
+        <palantir-java-format.version>2.103.0</palantir-java-format.version>
+
+        <!-- run only one test suite: -DskipUTs=true (integration only) or -DskipITs=true (unit only) -->
+        <skipUTs>false</skipUTs>
     </properties>
 
     <dependencyManagement>
@@ -96,6 +100,42 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.6.0</version>
+                    <configuration>
+                        <!-- unit tests only; @Tag("integration") classes run under failsafe -->
+                        <excludedGroups>integration</excludedGroups>
+                        <skipTests>${skipUTs}</skipTests>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.6.1</version>
+                    <configuration>
+                        <groups>integration</groups>
+                        <includes>
+                            <include>**/*Test.java</include>
+                        </includes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>3.12.0</version>
+                    <configuration>
+                        <java>
+                            <palantirJavaFormat>
+                                <version>${palantir-java-format.version}</version>
+                            </palantirJavaFormat>
+                        </java>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -104,5 +144,16 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <!-- not bound to a phase: run explicitly with spotless:check / spotless:apply -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>

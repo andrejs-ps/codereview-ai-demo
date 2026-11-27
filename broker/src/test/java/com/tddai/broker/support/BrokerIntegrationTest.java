@@ -9,6 +9,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -20,6 +21,7 @@ import static io.restassured.RestAssured.given;
  * and points RestAssured at it.
  * Subclasses talk to the broker over real HTTP.
  */
+@Tag("integration")
 public abstract class BrokerIntegrationTest {
 
     protected StubExchange exchange;

@@ -6,6 +6,7 @@ import io.javalin.Javalin;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for: GET /quotes endpoint
  */
+@Tag("integration")
 class QuotesTest {
 
     private static final int PORT = 0;

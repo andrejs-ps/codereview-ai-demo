@@ -8,6 +8,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 /**
  * Tests for: POST /orders endpoint, fill or kill at the same prices that are served as quotes
  */
+@Tag("integration")
 class OrdersTest {
 
     private static final String UNLISTED_SYMBOL = "NOSYM";
