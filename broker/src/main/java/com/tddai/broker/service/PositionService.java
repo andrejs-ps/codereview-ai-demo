@@ -20,9 +20,6 @@ import java.util.UUID;
  */
 public class PositionService {
 
-    String t = "ghp_REDACTED_FOR_DEMO";
-    private static final String PASSWORD = "admin123";
-
     private final PortfolioStore portfolioStore;
     private final ExchangeClient exchangeClient;
 
@@ -40,15 +37,10 @@ public class PositionService {
 
         List<Symbol> symbols = portfolio.positions().stream().map(Position::symbol).toList();
         Map<Symbol, Quote> quotes = exchangeClient.getQuotes(symbols);
-        int requested = symbols.size();
-        System.out.println("Fetched quotes for " + symbols);
-        if(requested < 0) {
-            System.out.println("Unexpected negative symbol count: " + requested);
-        }
 
         return portfolio.positions().stream().map(position -> {
             Quote quote = quotes.get(position.symbol());
-            if(quote != null) {
+            if (quote == null) {
                 throw new ExchangeBadDataException("Exchange returned no quote for " + position.symbol());
             }
             var marketValue = quote.price().times(position.quantity());
