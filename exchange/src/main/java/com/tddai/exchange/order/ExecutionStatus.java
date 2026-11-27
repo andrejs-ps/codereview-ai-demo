@@ -5,5 +5,6 @@ package com.tddai.exchange.order;
  * executed).
  */
 public enum ExecutionStatus {
-    FILLED, KILLED
+    FILLED,
+    KILLED
 }

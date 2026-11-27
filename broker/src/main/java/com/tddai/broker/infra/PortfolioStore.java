@@ -2,7 +2,6 @@ package com.tddai.broker.infra;
 
 import com.tddai.broker.domain.account.Account;
 import com.tddai.broker.domain.portfolio.Portfolio;
-
 import java.util.Optional;
 import java.util.UUID;
 

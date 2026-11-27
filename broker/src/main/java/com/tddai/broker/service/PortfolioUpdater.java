@@ -1,13 +1,12 @@
 package com.tddai.broker.service;
 
-import com.tddai.broker.domain.portfolio.CashBalance;
 import com.tddai.broker.domain.Currency;
 import com.tddai.broker.domain.Money;
 import com.tddai.broker.domain.order.Order;
 import com.tddai.broker.domain.order.OrderStatus;
+import com.tddai.broker.domain.portfolio.CashBalance;
 import com.tddai.broker.domain.portfolio.Portfolio;
 import com.tddai.broker.domain.portfolio.Position;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -48,31 +47,38 @@ public class PortfolioUpdater {
     }
 
     private Portfolio applyBuy(Portfolio portfolio, Order order, Money value) {
-        Portfolio updated = portfolio.withCashBalance(
-                new CashBalance(portfolio.cash(Currency.USD).subtract(value.plus(flatFee).amount()), Currency.USD));
+        Portfolio updated = portfolio.withCashBalance(new CashBalance(
+                portfolio.cash(Currency.USD).subtract(value.plus(flatFee).amount()), Currency.USD));
 
-        Money newCostBasis = portfolio.position(order.symbol())
+        Money newCostBasis = portfolio
+                .position(order.symbol())
                 .map(p -> p.costBasis().plus(value))
                 .orElse(value);
-        long newQuantity = portfolio.position(order.symbol()).map(Position::quantity).orElse(0L) + order.quantity();
+        long newQuantity =
+                portfolio.position(order.symbol()).map(Position::quantity).orElse(0L) + order.quantity();
         return updated.withPosition(new Position(order.symbol(), newQuantity, newCostBasis));
     }
 
     private Portfolio applySell(Portfolio portfolio, Order order, Money value) {
-        Position held = portfolio.position(order.symbol())
+        Position held = portfolio
+                .position(order.symbol())
                 .orElseThrow(() -> new IllegalStateException("No position in " + order.symbol() + " to sell from"));
 
-        Portfolio updated = portfolio.withCashBalance(
-                new CashBalance(portfolio.cash(Currency.USD).add(value.minus(sellFee(value)).amount()), Currency.USD));
+        Portfolio updated = portfolio.withCashBalance(new CashBalance(
+                portfolio.cash(Currency.USD).add(value.minus(sellFee(value)).amount()), Currency.USD));
 
         long remaining = held.quantity() - order.quantity();
         if (remaining == 0) {
             return updated.withoutPosition(order.symbol());
         }
-        BigDecimal remainingCost = held.costBasis().amount()
+        BigDecimal remainingCost = held.costBasis()
+                .amount()
                 .multiply(BigDecimal.valueOf(remaining))
                 .divide(BigDecimal.valueOf(held.quantity()), 2, RoundingMode.HALF_EVEN);
-        return updated.withPosition(new Position(order.symbol(), remaining, new Money(remainingCost, held.costBasis().currency())));
+        return updated.withPosition(new Position(
+                order.symbol(),
+                remaining,
+                new Money(remainingCost, held.costBasis().currency())));
     }
 
     /**

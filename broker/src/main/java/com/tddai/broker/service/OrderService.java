@@ -9,7 +9,6 @@ import com.tddai.broker.domain.portfolio.Portfolio;
 import com.tddai.broker.error.AccountNotFoundException;
 import com.tddai.broker.infra.ExchangeClient;
 import com.tddai.broker.infra.PortfolioStore;
-
 import java.util.Optional;
 
 /**
@@ -24,11 +23,12 @@ public class OrderService {
     private final ExchangeClient exchangeClient;
     private final PortfolioUpdater portfolioUpdater;
 
-    public OrderService(PortfolioStore portfolioStore,
-                        OrderValidator orderValidator,
-                        BuyingPowerValidator buyingPowerValidator,
-                        ExchangeClient exchangeClient,
-                        PortfolioUpdater portfolioUpdater) {
+    public OrderService(
+            PortfolioStore portfolioStore,
+            OrderValidator orderValidator,
+            BuyingPowerValidator buyingPowerValidator,
+            ExchangeClient exchangeClient,
+            PortfolioUpdater portfolioUpdater) {
         this.portfolioStore = portfolioStore;
         this.orderValidator = orderValidator;
         this.buyingPowerValidator = buyingPowerValidator;
@@ -42,8 +42,10 @@ public class OrderService {
      * The portfolio is saved only when filled.
      */
     public Order placeOrder(OrderRequest request) {
-        Portfolio portfolio = portfolioStore.findPortfolio(request.accountId())
-                .orElseThrow(() -> new AccountNotFoundException(request.accountId().toString()));
+        Portfolio portfolio = portfolioStore
+                .findPortfolio(request.accountId())
+                .orElseThrow(
+                        () -> new AccountNotFoundException(request.accountId().toString()));
 
         Optional<RejectionReason> invalid = orderValidator.validate(request, portfolio);
         if (invalid.isPresent()) {

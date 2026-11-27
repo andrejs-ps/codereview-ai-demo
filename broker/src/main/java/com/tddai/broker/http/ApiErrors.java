@@ -8,9 +8,8 @@ import com.tddai.broker.error.ExchangeTimeoutException;
 import com.tddai.broker.error.InvalidRequestException;
 import io.javalin.config.RoutesConfig;
 import io.javalin.http.HttpStatus;
-import tools.jackson.core.JacksonException;
-
 import java.util.Map;
+import tools.jackson.core.JacksonException;
 
 /**
  * Maps domain exceptions to status codes.
@@ -18,13 +17,14 @@ import java.util.Map;
  */
 public final class ApiErrors {
 
-    private ApiErrors() {
-    }
+    private ApiErrors() {}
 
     public static void register(RoutesConfig routes) {
         routes.exception(InvalidRequestException.class, (e, ctx) -> respond(ctx, HttpStatus.BAD_REQUEST, e));
-        routes.exception(JacksonException.class, (e, ctx) ->
-                ctx.status(HttpStatus.BAD_REQUEST).json(Map.of("error", "Malformed or unreadable JSON body")));
+        routes.exception(
+                JacksonException.class,
+                (e, ctx) ->
+                        ctx.status(HttpStatus.BAD_REQUEST).json(Map.of("error", "Malformed or unreadable JSON body")));
         routes.exception(AccountNotFoundException.class, (e, ctx) -> respond(ctx, HttpStatus.NOT_FOUND, e));
         routes.exception(BalanceNotFoundException.class, (e, ctx) -> respond(ctx, HttpStatus.NOT_FOUND, e));
         routes.exception(BalanceAlreadyOpenException.class, (e, ctx) -> respond(ctx, HttpStatus.CONFLICT, e));

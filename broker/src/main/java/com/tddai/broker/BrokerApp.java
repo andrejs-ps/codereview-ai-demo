@@ -19,11 +19,10 @@ import com.tddai.broker.service.PortfolioUpdater;
 import com.tddai.broker.service.PositionService;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson3;
-import tools.jackson.databind.json.JsonMapper;
-
-import javax.sql.DataSource;
 import java.net.URI;
 import java.net.http.HttpClient;
+import javax.sql.DataSource;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Wires the broker together.
@@ -31,8 +30,7 @@ import java.net.http.HttpClient;
  */
 public final class BrokerApp {
 
-    private BrokerApp() {
-    }
+    private BrokerApp() {}
 
     /**
      * Creates the broker and starts it on the configured port.
@@ -56,7 +54,10 @@ public final class BrokerApp {
         Money flatFee = Money.usd(config.flatFeeUsd());
         var accountController = new AccountController(new AccountService(store));
         var orderController = new OrderController(new OrderService(
-                store, new OrderValidator(), new BuyingPowerValidator(flatFee), exchange,
+                store,
+                new OrderValidator(),
+                new BuyingPowerValidator(flatFee),
+                exchange,
                 new PortfolioUpdater(flatFee)));
         var positionController = new PositionController(new PositionService(store, exchange));
 

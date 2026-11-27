@@ -6,19 +6,17 @@ import com.tddai.exchange.order.OrderExecutor;
 import com.tddai.exchange.order.OrderRequestDto;
 import com.tddai.exchange.quote.QuoteDto;
 import com.tddai.exchange.quote.QuoteGenerator;
-
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.json.JavalinJackson3;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.json.JsonMapper;
-
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.random.RandomGenerator;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * The simulated NYSE exchange. Two endpoints:
@@ -51,9 +49,7 @@ public class ExchangeApp {
         Clock clock = Clock.systemUTC();
         var quotes = new QuoteGenerator(clock, config.priceFluctuation(), RandomGenerator.getDefault());
         var app = new ExchangeApp(
-                new FaultSimulator(config, RandomGenerator.getDefault()),
-                quotes,
-                new OrderExecutor(quotes, clock));
+                new FaultSimulator(config, RandomGenerator.getDefault()), quotes, new OrderExecutor(quotes, clock));
         return app.javalin();
     }
 
@@ -63,8 +59,10 @@ public class ExchangeApp {
             cfg.jsonMapper(new JavalinJackson3(JsonMapper.builder().build(), false));
             cfg.routes.get("/quotes", this::getQuotes);
             cfg.routes.post("/orders", this::postOrder);
-            cfg.routes.exception(JacksonException.class, (e, ctx) ->
-                    ctx.status(HttpStatus.BAD_REQUEST).json(Map.of("error", "Malformed or unreadable JSON body")));
+            cfg.routes.exception(
+                    JacksonException.class,
+                    (e, ctx) -> ctx.status(HttpStatus.BAD_REQUEST)
+                            .json(Map.of("error", "Malformed or unreadable JSON body")));
         });
     }
 
@@ -114,9 +112,8 @@ public class ExchangeApp {
     private void getQuotes(Context ctx) {
         String symbolsParam = ctx.queryParam("symbols");
         if (symbolsParam == null || symbolsParam.isBlank()) {
-            ctx.status(HttpStatus.BAD_REQUEST).json(Map.of("error",
-                    "symbols query parameter is required. Example: /quotes?symbols=AAPL")
-            );
+            ctx.status(HttpStatus.BAD_REQUEST)
+                    .json(Map.of("error", "symbols query parameter is required. Example: /quotes?symbols=AAPL"));
             return;
         }
         faults.maybeSlowDown();

@@ -1,12 +1,11 @@
 package com.tddai.broker.http;
 
-import com.tddai.broker.support.BrokerIntegrationTest;
-import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+
+import com.tddai.broker.support.BrokerIntegrationTest;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class DepositEndpointsTest extends BrokerIntegrationTest {
 
@@ -26,35 +25,27 @@ class DepositEndpointsTest extends BrokerIntegrationTest {
         deposit(id, "USD", "100");
         deposit(id, "USD", "250.25");
 
-        given()
-                .when()
-                .get("/accounts/" + id)
-                .then()
-                .body("balances[0].amount", equalTo(350.25f));
+        given().when().get("/accounts/" + id).then().body("balances[0].amount", equalTo(350.25f));
     }
 
     @Test
     void rejectsANonPositiveDeposit() {
         String id = createAccount("Ada");
 
-        postDeposit(id, "USD", "0")
-                .statusCode(400);
-        postDeposit(id, "USD", "-5")
-                .statusCode(400);
+        postDeposit(id, "USD", "0").statusCode(400);
+        postDeposit(id, "USD", "-5").statusCode(400);
     }
 
     @Test
     void cannotDepositIntoAnEurBalanceThatIsNotOpen() {
         String id = createAccount("Ada");
 
-        postDeposit(id, "EUR", "100")
-                .statusCode(404);
+        postDeposit(id, "EUR", "100").statusCode(404);
     }
 
     @Test
     void cannotDepositIntoAnUnknownAccount() {
-        postDeposit(UUID.randomUUID().toString(), "USD", "100")
-                .statusCode(404);
+        postDeposit(UUID.randomUUID().toString(), "USD", "100").statusCode(404);
     }
 
     @Test

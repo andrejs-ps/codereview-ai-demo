@@ -12,5 +12,4 @@ public record OrderRequestDto(
         Side side,
         Long quantity,
         BigDecimal limitPrice,
-        TimeInForce timeInForce) {
-}
+        TimeInForce timeInForce) {}

@@ -1,8 +1,8 @@
 package com.tddai.demo;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -10,10 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class RobustNumCalculatorTest {
 
@@ -49,7 +48,8 @@ class RobustNumCalculatorTest {
 
     @Test
     void nonUtf8FileIsRejected() {
-        InvalidFileStateException e = assertThrows(InvalidFileStateException.class, () -> numsOf("latin1-encoding.csv"));
+        InvalidFileStateException e =
+                assertThrows(InvalidFileStateException.class, () -> numsOf("latin1-encoding.csv"));
         assertTrue(e.getMessage().contains("UTF-8"));
     }
 
@@ -57,7 +57,8 @@ class RobustNumCalculatorTest {
     void tooBigFileIsRejected() {
         // big-file.csv is 16 MB
         RobustNumCalculator smallLimit = new RobustNumCalculator(errorsDir, 10L * 1024 * 1024);
-        InvalidFileStateException e = assertThrows(InvalidFileStateException.class, () -> smallLimit.calculateNum("big-file.csv"));
+        InvalidFileStateException e =
+                assertThrows(InvalidFileStateException.class, () -> smallLimit.calculateNum("big-file.csv"));
         assertTrue(e.getMessage().contains("too big"));
     }
 
@@ -66,41 +67,49 @@ class RobustNumCalculatorTest {
     @Test
     void unparseableOrEmptyNumbersAreReported() throws Exception {
         assertEquals(decimals("3.00"), numsOf("bad-number.csv"));
-        assertEquals(List.of(
-                "bad-number.csv:1: Line has invalid values: abc,50",
-                "bad-number.csv:2: Line has invalid values: ,50",
-                "bad-number.csv:3: Line has invalid values: 2.50,xyz",
-                "bad-number.csv:4: Line has invalid values: "), errorLines());
+        assertEquals(
+                List.of(
+                        "bad-number.csv:1: Line has invalid values: abc,50",
+                        "bad-number.csv:2: Line has invalid values: ,50",
+                        "bad-number.csv:3: Line has invalid values: 2.50,xyz",
+                        "bad-number.csv:4: Line has invalid values: "),
+                errorLines());
     }
 
     @Test
     void missingColumnsAreReported() throws Exception {
         assertEquals(decimals("3.00"), numsOf("missing-column.csv"));
-        assertEquals(List.of(
-                "missing-column.csv:1: Line has invalid values: 5",
-                "missing-column.csv:2: Line has invalid values: 5,"), errorLines());
+        assertEquals(
+                List.of(
+                        "missing-column.csv:1: Line has invalid values: 5",
+                        "missing-column.csv:2: Line has invalid values: 5,"),
+                errorLines());
     }
 
     @Test
     void extraColumnsAreReportedInsteadOfIgnored() throws Exception {
         assertEquals(decimals("3.00"), numsOf("silent-wrong-columns.csv"));
-        assertEquals(List.of(
-                "silent-wrong-columns.csv:1: Line has invalid values: 2.50,50,999",
-                "silent-wrong-columns.csv:2: Line has invalid values: 3,60,70,80",
-                "silent-wrong-columns.csv:3: Line has invalid values: 2.50,50,"), errorLines());
+        assertEquals(
+                List.of(
+                        "silent-wrong-columns.csv:1: Line has invalid values: 2.50,50,999",
+                        "silent-wrong-columns.csv:2: Line has invalid values: 3,60,70,80",
+                        "silent-wrong-columns.csv:3: Line has invalid values: 2.50,50,"),
+                errorLines());
     }
 
     @Test
     void nonsensicalValuesAreReportedInsteadOfSilentlyCalculated() throws Exception {
         // BigDecimal has no overflow: the two huge values are calculated correctly, where double gave Infinity
         assertEquals(decimals("2E+999", "1E+312", "5.00"), numsOf("silent-wrong-values.csv"));
-        assertEquals(List.of(
-                "silent-wrong-values.csv:1: Line has invalid values: 2.50,0",
-                "silent-wrong-values.csv:2: Line has invalid values: 0,0",
-                "silent-wrong-values.csv:3: Line has invalid values: -2.50,50",
-                "silent-wrong-values.csv:4: Line has invalid values: 2.50,-50",
-                "silent-wrong-values.csv:5: Line has invalid values: NaN,50",
-                "silent-wrong-values.csv:6: Line has invalid values: Infinity,50"), errorLines());
+        assertEquals(
+                List.of(
+                        "silent-wrong-values.csv:1: Line has invalid values: 2.50,0",
+                        "silent-wrong-values.csv:2: Line has invalid values: 0,0",
+                        "silent-wrong-values.csv:3: Line has invalid values: -2.50,50",
+                        "silent-wrong-values.csv:4: Line has invalid values: 2.50,-50",
+                        "silent-wrong-values.csv:5: Line has invalid values: NaN,50",
+                        "silent-wrong-values.csv:6: Line has invalid values: Infinity,50"),
+                errorLines());
     }
 
     @Test

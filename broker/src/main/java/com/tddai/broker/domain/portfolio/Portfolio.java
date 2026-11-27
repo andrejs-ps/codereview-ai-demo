@@ -2,7 +2,6 @@ package com.tddai.broker.domain.portfolio;
 
 import com.tddai.broker.domain.Currency;
 import com.tddai.broker.domain.Symbol;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +41,7 @@ public record Portfolio(UUID accountId, List<CashBalance> cashBalances, List<Pos
      * The shares the account holds in this stock, if any.
      */
     public Optional<Position> position(Symbol symbol) {
-        return positions.stream()
-                .filter(p -> p.symbol().equals(symbol))
-                .findFirst();
+        return positions.stream().filter(p -> p.symbol().equals(symbol)).findFirst();
     }
 
     /**

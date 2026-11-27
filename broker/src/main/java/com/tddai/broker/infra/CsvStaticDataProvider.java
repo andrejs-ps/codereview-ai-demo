@@ -1,9 +1,6 @@
 package com.tddai.broker.infra;
 
 import com.tddai.broker.domain.Currency;
-import tools.jackson.dataformat.csv.CsvMapper;
-import tools.jackson.dataformat.csv.CsvSchema;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +10,8 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import tools.jackson.dataformat.csv.CsvMapper;
+import tools.jackson.dataformat.csv.CsvSchema;
 
 /**
  * Reads fx-rates.csv (header: from,to,rate) once, at construction.
@@ -20,11 +19,9 @@ import java.util.Map;
  */
 public class CsvStaticDataProvider implements StaticDataProvider {
 
-    public record FxRateRow(Currency from, Currency to, BigDecimal rate) {
-    }
+    public record FxRateRow(Currency from, Currency to, BigDecimal rate) {}
 
-    private record Pair(Currency from, Currency to) {
-    }
+    private record Pair(Currency from, Currency to) {}
 
     private final Map<Pair, BigDecimal> rates = new HashMap<>();
 

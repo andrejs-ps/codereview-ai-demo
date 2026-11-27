@@ -1,15 +1,14 @@
 package com.tddai.broker.http;
 
+import static com.tddai.broker.http.Amounts.*;
+
 import com.tddai.broker.service.AccountService;
 import com.tddai.broker.service.AccountService.AccountView;
 import io.javalin.config.RoutesConfig;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-
 import java.math.BigDecimal;
 import java.util.List;
-
-import static com.tddai.broker.http.Amounts.*;
 
 /**
  * Thin HTTP layer for account set-up.
@@ -17,20 +16,15 @@ import static com.tddai.broker.http.Amounts.*;
  */
 public class AccountController {
 
-    public record CreateAccountBody(String investorName) {
-    }
+    public record CreateAccountBody(String investorName) {}
 
-    public record OpenBalanceBody(String currency) {
-    }
+    public record OpenBalanceBody(String currency) {}
 
-    public record DepositBody(String currency, BigDecimal amount) {
-    }
+    public record DepositBody(String currency, BigDecimal amount) {}
 
-    public record BalanceJson(String currency, BigDecimal amount) {
-    }
+    public record BalanceJson(String currency, BigDecimal amount) {}
 
-    public record AccountJson(String accountId, String investorName, List<BalanceJson> balances) {
-    }
+    public record AccountJson(String accountId, String investorName, List<BalanceJson> balances) {}
 
     private final AccountService accountService;
 
@@ -64,13 +58,15 @@ public class AccountController {
 
     private void openBalance(Context ctx) {
         var body = ctx.bodyAsClass(OpenBalanceBody.class);
-        var view = accountService.openBalance(Requests.accountId(ctx.pathParam("accountId")), Requests.currency(body.currency()));
+        var view = accountService.openBalance(
+                Requests.accountId(ctx.pathParam("accountId")), Requests.currency(body.currency()));
         ctx.status(HttpStatus.CREATED).json(toJson(view));
     }
 
     private void deposit(Context ctx) {
         var body = ctx.bodyAsClass(DepositBody.class);
-        var view = accountService.deposit(Requests.accountId(ctx.pathParam("accountId")), Requests.currency(body.currency()), body.amount());
+        var view = accountService.deposit(
+                Requests.accountId(ctx.pathParam("accountId")), Requests.currency(body.currency()), body.amount());
         ctx.json(toJson(view));
     }
 
@@ -78,6 +74,7 @@ public class AccountController {
         List<BalanceJson> balances = view.portfolio().cashBalances().stream()
                 .map(b -> new BalanceJson(b.currency().name(), twoDecimals(b.amount())))
                 .toList();
-        return new AccountJson(view.account().id().toString(), view.account().investor().name(), balances);
+        return new AccountJson(
+                view.account().id().toString(), view.account().investor().name(), balances);
     }
 }

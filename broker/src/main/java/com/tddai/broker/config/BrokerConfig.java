@@ -14,8 +14,8 @@ import java.util.Properties;
  * A negative fee is treated as no fee.
  * Tests construct the record directly.
  */
-public record BrokerConfig(int port, String exchangeUrl, Duration exchangeTimeout, String dbUrl,
-                           BigDecimal flatFeeUsd) {
+public record BrokerConfig(
+        int port, String exchangeUrl, Duration exchangeTimeout, String dbUrl, BigDecimal flatFeeUsd) {
 
     public BrokerConfig {
         if (flatFeeUsd.signum() < 0) {

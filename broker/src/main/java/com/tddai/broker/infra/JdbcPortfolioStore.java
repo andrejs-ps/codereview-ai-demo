@@ -1,15 +1,13 @@
 package com.tddai.broker.infra;
 
-import com.tddai.broker.domain.account.Account;
-import com.tddai.broker.domain.portfolio.CashBalance;
 import com.tddai.broker.domain.Currency;
 import com.tddai.broker.domain.Money;
+import com.tddai.broker.domain.Symbol;
+import com.tddai.broker.domain.account.Account;
+import com.tddai.broker.domain.account.Investor;
+import com.tddai.broker.domain.portfolio.CashBalance;
 import com.tddai.broker.domain.portfolio.Portfolio;
 import com.tddai.broker.domain.portfolio.Position;
-import com.tddai.broker.domain.Symbol;
-import com.tddai.broker.domain.account.Investor;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.sql.DataSource;
 
 /**
  * PortfolioStore on plain JDBC.
@@ -47,8 +46,8 @@ public class JdbcPortfolioStore implements PortfolioStore {
     @Override
     public Optional<Account> findAccount(UUID accountId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     "SELECT account_id, investor_id, investor_name FROM accounts WHERE account_id = ?")) {
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT account_id, investor_id, investor_name FROM accounts WHERE account_id = ?")) {
             ps.setObject(1, accountId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
@@ -75,7 +74,8 @@ public class JdbcPortfolioStore implements PortfolioStore {
                 ps.setObject(1, accountId);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        balances.add(new CashBalance(rs.getBigDecimal("amount"), Currency.valueOf(rs.getString("currency"))));
+                        balances.add(new CashBalance(
+                                rs.getBigDecimal("amount"), Currency.valueOf(rs.getString("currency"))));
                     }
                 }
             }
@@ -88,7 +88,9 @@ public class JdbcPortfolioStore implements PortfolioStore {
                         positions.add(new Position(
                                 Symbol.of(rs.getString("symbol")),
                                 rs.getLong("quantity"),
-                                new Money(rs.getBigDecimal("cost_basis"), Currency.valueOf(rs.getString("cost_currency")))));
+                                new Money(
+                                        rs.getBigDecimal("cost_basis"),
+                                        Currency.valueOf(rs.getString("cost_currency")))));
                     }
                 }
             }
@@ -102,7 +104,8 @@ public class JdbcPortfolioStore implements PortfolioStore {
     public void save(Portfolio portfolio) {
         inTransaction(connection -> {
             for (String table : List.of("cash_balances", "positions")) {
-                try (PreparedStatement ps = connection.prepareStatement("DELETE FROM " + table + " WHERE account_id = ?")) {
+                try (PreparedStatement ps =
+                        connection.prepareStatement("DELETE FROM " + table + " WHERE account_id = ?")) {
                     ps.setObject(1, portfolio.accountId());
                     ps.executeUpdate();
                 }

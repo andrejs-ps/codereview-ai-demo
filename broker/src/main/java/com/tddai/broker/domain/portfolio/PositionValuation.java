@@ -8,9 +8,4 @@ import com.tddai.broker.domain.Symbol;
  * Never stored.
  */
 public record PositionValuation(
-        Symbol symbol,
-        long quantity,
-        Money costBasis,
-        Money marketValue,
-        Money unrealizedGainLoss) {
-}
+        Symbol symbol, long quantity, Money costBasis, Money marketValue, Money unrealizedGainLoss) {}

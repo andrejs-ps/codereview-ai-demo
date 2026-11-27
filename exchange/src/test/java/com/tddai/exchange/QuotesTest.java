@@ -1,14 +1,5 @@
 package com.tddai.exchange;
 
-import com.tddai.exchange.config.ExchangeConfig;
-
-import io.javalin.Javalin;
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,6 +8,14 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.tddai.exchange.config.ExchangeConfig;
+import io.javalin.Javalin;
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for: GET /quotes endpoint
@@ -31,6 +30,7 @@ class QuotesTest {
      * not list.
      */
     private static final String UNLISTED_SYMBOL = "NOSYM";
+
     private Javalin app;
 
     @AfterEach
@@ -56,11 +56,7 @@ class QuotesTest {
     void rejectsRequestWithoutSymbols() {
         startWith(noFaults());
 
-        given()
-                .when()
-                .get("/quotes")
-                .then()
-                .statusCode(400);
+        given().when().get("/quotes").then().statusCode(400);
     }
 
     @Test
@@ -86,7 +82,8 @@ class QuotesTest {
                     .get("/quotes")
                     .then()
                     .statusCode(200)
-                    .extract().path("AAPL.price");
+                    .extract()
+                    .path("AAPL.price");
 
             assertTrue(price >= 226.79f && price <= 236.05f, "price out of range: " + price);
         }
@@ -154,11 +151,7 @@ class QuotesTest {
         startWith(new ExchangeConfig(PORT, true, slowChance, slowDelayMs));
 
         long start = System.nanoTime();
-        given().queryParam("symbols", "AAPL")
-                .when()
-                .get("/quotes")
-                .then()
-                .statusCode(200);
+        given().queryParam("symbols", "AAPL").when().get("/quotes").then().statusCode(200);
 
         long elapsedMs = (System.nanoTime() - start) / 1_000_000;
 

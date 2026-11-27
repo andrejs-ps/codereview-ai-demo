@@ -95,7 +95,8 @@ public class RobustNumCalculator {
         BigDecimal dividend;
         BigDecimal price;
         try {
-            dividend = new BigDecimal(columns[0]); // rejects empty, NaN, Infinity, 1d, 0x1p3, which Double.parseDouble accepts
+            dividend = new BigDecimal(
+                    columns[0]); // rejects empty, NaN, Infinity, 1d, 0x1p3, which Double.parseDouble accepts
             price = new BigDecimal(columns[1]);
         } catch (NumberFormatException e) {
             throw invalid(line);

@@ -8,10 +8,6 @@ import com.tddai.broker.domain.order.KillReason;
 import com.tddai.broker.domain.order.OrderRequest;
 import com.tddai.broker.error.ExchangeBadDataException;
 import com.tddai.broker.error.ExchangeTimeoutException;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.json.JsonMapper;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -25,6 +21,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * ExchangeClient over java.net.http: POST {baseUri}/orders to send an order, GET
@@ -86,7 +85,7 @@ public class HttpExchangeClient implements ExchangeClient {
         if (response.statusCode() != 200) {
             throw new ExchangeBadDataException("Exchange answered with status " + response.statusCode());
         }
-        Map<String, QuoteBody> answer = MAPPER.readValue(response.body(), new TypeReference<>() { });
+        Map<String, QuoteBody> answer = MAPPER.readValue(response.body(), new TypeReference<>() {});
 
         Map<Symbol, Quote> quotes = new LinkedHashMap<>();
         for (Symbol symbol : symbols) {
@@ -114,9 +113,7 @@ public class HttpExchangeClient implements ExchangeClient {
     /**
      * The exchange's answer to an order: price and timestamp when FILLED, reason when KILLED.
      */
-    private record ExecutionBody(String status, BigDecimal price, Instant timestamp, String reason) {
-    }
+    private record ExecutionBody(String status, BigDecimal price, Instant timestamp, String reason) {}
 
-    private record QuoteBody(BigDecimal price, Instant timestamp) {
-    }
+    private record QuoteBody(BigDecimal price, Instant timestamp) {}
 }

@@ -2,7 +2,6 @@ package com.tddai.broker.domain.order;
 
 import com.tddai.broker.domain.Money;
 import com.tddai.broker.domain.Symbol;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -27,20 +26,50 @@ public record Order(
         KillReason killReason) {
 
     public static Order filled(OrderRequest request, Money fillPrice, Instant filledAt) {
-        return new Order(request.id(), request.accountId(), request.symbol(), request.side(),
-                request.quantity(), request.limitPrice(), request.timeInForce(),
-                fillPrice, filledAt, OrderStatus.FILLED, null, null);
+        return new Order(
+                request.id(),
+                request.accountId(),
+                request.symbol(),
+                request.side(),
+                request.quantity(),
+                request.limitPrice(),
+                request.timeInForce(),
+                fillPrice,
+                filledAt,
+                OrderStatus.FILLED,
+                null,
+                null);
     }
 
     public static Order rejected(OrderRequest request, RejectionReason reason) {
-        return new Order(request.id(), request.accountId(), request.symbol(), request.side(),
-                request.quantity(), request.limitPrice(), request.timeInForce(),
-                null, null, OrderStatus.REJECTED, reason, null);
+        return new Order(
+                request.id(),
+                request.accountId(),
+                request.symbol(),
+                request.side(),
+                request.quantity(),
+                request.limitPrice(),
+                request.timeInForce(),
+                null,
+                null,
+                OrderStatus.REJECTED,
+                reason,
+                null);
     }
 
     public static Order killed(OrderRequest request, KillReason reason) {
-        return new Order(request.id(), request.accountId(), request.symbol(), request.side(),
-                request.quantity(), request.limitPrice(), request.timeInForce(),
-                null, null, OrderStatus.KILLED, null, reason);
+        return new Order(
+                request.id(),
+                request.accountId(),
+                request.symbol(),
+                request.side(),
+                request.quantity(),
+                request.limitPrice(),
+                request.timeInForce(),
+                null,
+                null,
+                OrderStatus.KILLED,
+                null,
+                reason);
     }
 }

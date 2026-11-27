@@ -1,22 +1,21 @@
 package com.tddai.broker.infra;
 
-import com.tddai.broker.domain.account.Account;
-import com.tddai.broker.domain.portfolio.CashBalance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.tddai.broker.domain.Money;
+import com.tddai.broker.domain.Symbol;
+import com.tddai.broker.domain.account.Account;
+import com.tddai.broker.domain.account.Investor;
+import com.tddai.broker.domain.portfolio.CashBalance;
 import com.tddai.broker.domain.portfolio.Portfolio;
 import com.tddai.broker.domain.portfolio.Position;
-import com.tddai.broker.domain.Symbol;
-import com.tddai.broker.domain.account.Investor;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import javax.sql.DataSource;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The PortfolioStore on plain JDBC, against an in-memory H2 database.
@@ -60,9 +59,11 @@ class JdbcPortfolioStoreTest {
     @Test
     void aSavedPortfolioIsReadBackExactly() {
         store.createAccount(account, initial());
-        Portfolio updated = new Portfolio(account.id(),
+        Portfolio updated = new Portfolio(
+                account.id(),
                 List.of(CashBalance.eur("107.4074"), CashBalance.usd("2685.80")),
-                List.of(new Position(Symbol.of("AAPL"), 10, Money.usd("2314.20")),
+                List.of(
+                        new Position(Symbol.of("AAPL"), 10, Money.usd("2314.20")),
                         new Position(Symbol.of("IBM"), 3, Money.usd("571.65"))));
 
         store.save(updated);
@@ -73,7 +74,9 @@ class JdbcPortfolioStoreTest {
     @Test
     void savingAfterASaleRemovesThePositionAndUpdatesTheCash() {
         store.createAccount(account, initial());
-        store.save(new Portfolio(account.id(), List.of(CashBalance.usd("100")),
+        store.save(new Portfolio(
+                account.id(),
+                List.of(CashBalance.usd("100")),
                 List.of(new Position(Symbol.of("AAPL"), 10, Money.usd("1000")))));
         Portfolio afterSale = new Portfolio(account.id(), List.of(CashBalance.usd("1600")), List.of());
 
@@ -90,7 +93,8 @@ class JdbcPortfolioStoreTest {
 
         store.save(new Portfolio(account.id(), List.of(CashBalance.usd("1")), List.of()));
 
-        assertEquals(Optional.of(new Portfolio(other.id(), List.of(CashBalance.usd("42")), List.of())),
+        assertEquals(
+                Optional.of(new Portfolio(other.id(), List.of(CashBalance.usd("42")), List.of())),
                 store.findPortfolio(other.id()));
     }
 

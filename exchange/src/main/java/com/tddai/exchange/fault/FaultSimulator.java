@@ -1,7 +1,6 @@
 package com.tddai.exchange.fault;
 
 import com.tddai.exchange.config.ExchangeConfig;
-
 import java.util.random.RandomGenerator;
 
 /**

@@ -4,7 +4,6 @@ import com.tddai.broker.domain.Quote;
 import com.tddai.broker.domain.Symbol;
 import com.tddai.broker.domain.order.ExecutionReport;
 import com.tddai.broker.domain.order.OrderRequest;
-
 import java.util.Collection;
 import java.util.Map;
 

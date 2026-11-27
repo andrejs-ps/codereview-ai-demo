@@ -2,7 +2,6 @@ package com.tddai.exchange.order;
 
 import com.tddai.exchange.quote.QuoteDto;
 import com.tddai.exchange.quote.QuoteGenerator;
-
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.Optional;
@@ -38,12 +37,28 @@ public class OrderExecutor {
         if (!withinLimit) {
             return killed(orderId, order, KillReason.LIMIT_NOT_MET);
         }
-        return new ExecutionDto(orderId, order.clientOrderId(), ExecutionStatus.FILLED, order.symbol(), order.side(), order.quantity(),
-                price, null, clock.instant());
+        return new ExecutionDto(
+                orderId,
+                order.clientOrderId(),
+                ExecutionStatus.FILLED,
+                order.symbol(),
+                order.side(),
+                order.quantity(),
+                price,
+                null,
+                clock.instant());
     }
 
     private ExecutionDto killed(String orderId, OrderRequestDto order, KillReason reason) {
-        return new ExecutionDto(orderId, order.clientOrderId(), ExecutionStatus.KILLED, order.symbol(), order.side(), order.quantity(),
-                null, reason, clock.instant());
+        return new ExecutionDto(
+                orderId,
+                order.clientOrderId(),
+                ExecutionStatus.KILLED,
+                order.symbol(),
+                order.side(),
+                order.quantity(),
+                null,
+                reason,
+                clock.instant());
     }
 }

@@ -45,9 +45,9 @@ public record Money(BigDecimal amount, Currency currency) {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof Money(
-                BigDecimal amount1, Currency currency1
-        ) && currency == currency1 && amount.compareTo(amount1) == 0;
+        return o instanceof Money(BigDecimal amount1, Currency currency1)
+                && currency == currency1
+                && amount.compareTo(amount1) == 0;
     }
 
     @Override

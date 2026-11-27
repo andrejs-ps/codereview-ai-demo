@@ -12,11 +12,7 @@ import java.util.Properties;
  * 0 means prices never move.
  */
 public record ExchangeConfig(
-        int port,
-        boolean faultsEnabled,
-        double slowChance,
-        long slowDelayMs,
-        double priceFluctuation) {
+        int port, boolean faultsEnabled, double slowChance, long slowDelayMs, double priceFluctuation) {
 
     /**
      * A config with fixed prices (no fluctuation).

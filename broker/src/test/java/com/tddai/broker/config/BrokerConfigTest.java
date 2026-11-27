@@ -1,19 +1,18 @@
 package com.tddai.broker.config;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.math.BigDecimal;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.math.BigDecimal;
-import java.time.Duration;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class BrokerConfigTest {
 
     private static BrokerConfig configWithFee(String flatFeeUsd) {
-        return new BrokerConfig(0, "http://localhost:7070", Duration.ofSeconds(2), "jdbc:h2:mem:test",
-                new BigDecimal(flatFeeUsd));
+        return new BrokerConfig(
+                0, "http://localhost:7070", Duration.ofSeconds(2), "jdbc:h2:mem:test", new BigDecimal(flatFeeUsd));
     }
 
     @Test

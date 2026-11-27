@@ -6,5 +6,4 @@ import java.util.UUID;
  * One investor, one account.
  * Holds no cash itself: balances live on the Portfolio.
  */
-public record Account(UUID id, Investor investor) {
-}
+public record Account(UUID id, Investor investor) {}

@@ -10,7 +10,6 @@ import com.tddai.broker.error.BalanceAlreadyOpenException;
 import com.tddai.broker.error.BalanceNotFoundException;
 import com.tddai.broker.error.InvalidRequestException;
 import com.tddai.broker.infra.PortfolioStore;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -24,8 +23,7 @@ public class AccountService {
     /**
      * An account together with its current portfolio.
      */
-    public record AccountView(Account account, Portfolio portfolio) {
-    }
+    public record AccountView(Account account, Portfolio portfolio) {}
 
     private final PortfolioStore portfolioStore;
 
@@ -40,21 +38,21 @@ public class AccountService {
     public AccountView createAccount(String investorName) {
         if (investorName == null || investorName.isBlank()) { // test
             throw new InvalidRequestException("investorName is required");
-
         }
-        Account account = new Account(UUID.randomUUID(),
-                new Investor(UUID.randomUUID(), investorName.trim())
+        Account account = new Account(UUID.randomUUID(), new Investor(UUID.randomUUID(), investorName.trim()));
 
-        );
-        Portfolio portfolio = new Portfolio(account.id(), List.of(new CashBalance(BigDecimal.ZERO, Currency.USD)), List.of());
+        Portfolio portfolio =
+                new Portfolio(account.id(), List.of(new CashBalance(BigDecimal.ZERO, Currency.USD)), List.of());
         portfolioStore.createAccount(account, portfolio);
         return new AccountView(account, portfolio);
     }
 
     public AccountView getAccount(UUID accountId) {
-        Account account = portfolioStore.findAccount(accountId)
+        Account account = portfolioStore
+                .findAccount(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId.toString()));
-        Portfolio portfolio = portfolioStore.findPortfolio(accountId)
+        Portfolio portfolio = portfolioStore
+                .findPortfolio(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId.toString()));
         return new AccountView(account, portfolio);
     }
@@ -69,7 +67,7 @@ public class AccountService {
         if (view.portfolio().cashBalance(currency).isPresent()) {
             throw new BalanceAlreadyOpenException(currency.name());
         }
-        if(currency != Currency.EUR) { // test
+        if (currency != Currency.EUR) { // test
             throw new InvalidRequestException("Only an EUR balance can be opened");
         }
         Portfolio updated = view.portfolio().withCashBalance(new CashBalance(BigDecimal.ZERO, currency));
@@ -82,9 +80,10 @@ public class AccountService {
             throw new InvalidRequestException("amount must be greater than zero");
         }
         AccountView view = getAccount(accountId);
-        CashBalance balance = view.portfolio().cashBalance(currency)
-                .orElseThrow(() -> new BalanceNotFoundException(currency.name()));
-        Portfolio updated = view.portfolio().withCashBalance(new CashBalance(balance.amount().add(amount), currency));
+        CashBalance balance =
+                view.portfolio().cashBalance(currency).orElseThrow(() -> new BalanceNotFoundException(currency.name()));
+        Portfolio updated = view.portfolio()
+                .withCashBalance(new CashBalance(balance.amount().add(amount), currency));
         portfolioStore.save(updated);
         return new AccountView(view.account(), updated);
     }
