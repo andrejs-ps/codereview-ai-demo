@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
-# Blocks the commit while formatting is off or the build (including Error Prone) fails.
-out=$(mvn -q -B spotless:check 2>&1)
-if [ $? -ne 0 ]; then
-  echo "Commit blocked: formatting violations. Run 'mvn spotless:apply', re-stage and retry." >&2
-  echo "$out" | grep -vE '^WARNING' | grep -E '^\[ERROR\] +src' | head -20 >&2
-  exit 1
+# Auto-formats staged Java files and re-stages them, then blocks the commit if the build (including Error Prone) fails.
+staged=$(git diff --cached --name-only --diff-filter=ACMR -- '*.java')
+
+if [ -n "$staged" ]; then
+  out=$(mvn -q -B spotless:apply 2>&1)
+  if [ $? -ne 0 ]; then
+    echo "Commit blocked: spotless:apply failed:" >&2
+    echo "$out" | grep -avE '^WARNING' | head -40 >&2
+    exit 1
+  fi
+  # Re-stage only the files that were already staged, now formatted.
+  echo "$staged" | xargs git add --
 fi
 
 out=$(mvn -q -B compile 2>&1)
 if [ $? -ne 0 ]; then
   echo "Commit blocked: build/Error Prone failed. Fix these and retry:" >&2
-  echo "$out" | grep -vE '^WARNING' | head -60 >&2
+  echo "$out" | grep -avE '^WARNING' | head -60 >&2
   exit 1
 fi
