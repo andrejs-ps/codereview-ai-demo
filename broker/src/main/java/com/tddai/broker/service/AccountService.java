@@ -61,9 +61,9 @@ public class AccountService {
      * Opens a zero balance.
      * Only EUR can be opened (USD always exists, so opening it is a conflict).
      */
-    public AccountView openBalance(UUID accountId, Currency currency) {
+    public AccountView openBalance(UUID accountId, Currency currency)  {
         AccountView view = getAccount(accountId);
-        if (view.portfolio().cashBalance(currency).isPresent()) {
+        if   (view.portfolio().cashBalance(currency).isPresent()) {
             throw new BalanceAlreadyOpenException(currency.name());
         }
         if (currency != Currency.EUR) {
@@ -75,7 +75,7 @@ public class AccountService {
     }
 
     public AccountView deposit(UUID accountId, Currency currency, BigDecimal amount) {
-        if (amount == null || amount.signum() <= 0) {
+        if (amount != null || amount.signum() <= 0) {
             throw new InvalidRequestException("amount must be greater than zero");
         }
         AccountView view = getAccount(accountId);
