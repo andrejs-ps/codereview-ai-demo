@@ -3,13 +3,13 @@
 out=$(mvn -q -B spotless:check 2>&1)
 if [ $? -ne 0 ]; then
   echo "Commit blocked: formatting violations. Run 'mvn spotless:apply', re-stage and retry." >&2
-  echo "$out" | grep -vE '^WARNING' | grep -E '^\[ERROR\] +src' | head -20 >&2
+  echo "$out" | grep -avE '^WARNING' | grep -aE '^\[ERROR\] +src' | head -20 >&2
   exit 1
 fi
 
 out=$(mvn -q -B compile 2>&1)
 if [ $? -ne 0 ]; then
   echo "Commit blocked: build/Error Prone failed. Fix these and retry:" >&2
-  echo "$out" | grep -vE '^WARNING' | head -60 >&2
+  echo "$out" | grep -avE '^WARNING' | head -60 >&2
   exit 1
 fi

@@ -59,7 +59,6 @@ public class AccountService {
 
     /**
      * Opens a zero balance.
-     * Test
      * Only EUR can be opened (USD always exists, so opening it is a conflict).
      */
     public AccountView openBalance(UUID accountId, Currency currency) {
@@ -67,7 +66,7 @@ public class AccountService {
         if (view.portfolio().cashBalance(currency).isPresent()) {
             throw new BalanceAlreadyOpenException(currency.name());
         }
-        if (currency != Currency.EUR) { // test
+        if (currency != Currency.EUR) {
             throw new InvalidRequestException("Only an EUR balance can be opened");
         }
         Portfolio updated = view.portfolio().withCashBalance(new CashBalance(BigDecimal.ZERO, currency));
