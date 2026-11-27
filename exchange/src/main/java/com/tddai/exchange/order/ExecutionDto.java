@@ -1,7 +1,6 @@
 package com.tddai.exchange.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -28,5 +27,4 @@ public record ExecutionDto(
         long quantity,
         BigDecimal price,
         KillReason reason,
-        Instant timestamp) {
-}
+        Instant timestamp) {}

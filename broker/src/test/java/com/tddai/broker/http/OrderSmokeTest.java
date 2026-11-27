@@ -1,14 +1,14 @@
 package com.tddai.broker.http;
 
-import com.tddai.broker.support.BrokerIntegrationTest;
-import io.restassured.response.ValidatableResponse;
-import org.junit.jupiter.api.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.tddai.broker.support.BrokerIntegrationTest;
+import io.restassured.response.ValidatableResponse;
+import org.junit.jupiter.api.Test;
 
 /**
  * E2E test with only the Exchange mocked.
@@ -67,9 +67,7 @@ class OrderSmokeTest extends BrokerIntegrationTest {
                 .body("positions[0].marketValue", equalTo(1200.00f))
                 .body("positions[0].unrealizedGainLoss", equalTo(42.90f));
 
-        getAccount(id)
-                .statusCode(200)
-                .body("balances[0].amount", equalTo(3883.80f));
+        getAccount(id).statusCode(200).body("balances[0].amount", equalTo(3883.80f));
     }
 
     @Test
@@ -82,13 +80,9 @@ class OrderSmokeTest extends BrokerIntegrationTest {
                 .body("status", equalTo("FILLED"))
                 .body("fillPrice", equalTo(240.00f));
 
-        getPositions(id)
-                .statusCode(200)
-                .body("positions", hasSize(0));
+        getPositions(id).statusCode(200).body("positions", hasSize(0));
 
-        getAccount(id)
-                .statusCode(200)
-                .body("balances[0].amount", equalTo(5083.80f));
+        getAccount(id).statusCode(200).body("balances[0].amount", equalTo(5083.80f));
     }
 
     private String fundedAccount() {
@@ -100,9 +94,7 @@ class OrderSmokeTest extends BrokerIntegrationTest {
     private String fundedAccountHoldingTenAapl() {
         String id = fundedAccount();
         exchange.fillingOrdersAt("231.42");
-        placeOrder(id, "BUY", 10)
-                .statusCode(200)
-                .body("status", equalTo("FILLED"));
+        placeOrder(id, "BUY", 10).statusCode(200).body("status", equalTo("FILLED"));
         return id;
     }
 
@@ -113,16 +105,10 @@ class OrderSmokeTest extends BrokerIntegrationTest {
     }
 
     private static ValidatableResponse getPositions(String accountId) {
-        return given()
-                .when()
-                .get("/accounts/" + accountId + "/positions")
-                .then();
+        return given().when().get("/accounts/" + accountId + "/positions").then();
     }
 
     private static ValidatableResponse getAccount(String accountId) {
-        return given()
-                .when()
-                .get("/accounts/" + accountId)
-                .then();
+        return given().when().get("/accounts/" + accountId).then();
     }
 }

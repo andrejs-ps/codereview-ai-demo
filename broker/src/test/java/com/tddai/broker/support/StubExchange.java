@@ -1,7 +1,6 @@
 package com.tddai.broker.support;
 
 import io.javalin.Javalin;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -28,18 +27,19 @@ public class StubExchange implements AutoCloseable {
 
     public StubExchange() {
         app = Javalin.create(cfg -> {
-            cfg.startup.showJavalinBanner = false;
-            cfg.routes.get("/quotes", ctx -> {
-                requestedSymbols.add(String.valueOf(ctx.queryParam("symbols")));
-                pause();
-                ctx.status(quotesStatus).contentType("application/json").result(quotesBody);
-            });
-            cfg.routes.post("/orders", ctx -> {
-                receivedOrders.add(ctx.body());
-                pause();
-                ctx.status(ordersStatus).contentType("application/json").result(ordersBody);
-            });
-        }).start(0);
+                    cfg.startup.showJavalinBanner = false;
+                    cfg.routes.get("/quotes", ctx -> {
+                        requestedSymbols.add(String.valueOf(ctx.queryParam("symbols")));
+                        pause();
+                        ctx.status(quotesStatus).contentType("application/json").result(quotesBody);
+                    });
+                    cfg.routes.post("/orders", ctx -> {
+                        receivedOrders.add(ctx.body());
+                        pause();
+                        ctx.status(ordersStatus).contentType("application/json").result(ordersBody);
+                    });
+                })
+                .start(0);
     }
 
     private void pause() throws InterruptedException {

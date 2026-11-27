@@ -3,7 +3,6 @@ package com.tddai.broker.support;
 import com.tddai.broker.domain.account.Account;
 import com.tddai.broker.domain.portfolio.Portfolio;
 import com.tddai.broker.infra.PortfolioStore;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

@@ -1,11 +1,11 @@
 package com.tddai.broker.domain.portfolio;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.tddai.broker.domain.Money;
 import com.tddai.broker.domain.Symbol;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PositionTest {
 

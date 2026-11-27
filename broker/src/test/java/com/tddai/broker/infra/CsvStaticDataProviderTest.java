@@ -1,13 +1,12 @@
 package com.tddai.broker.infra;
 
-import com.tddai.broker.domain.Currency;
-import org.junit.jupiter.api.Test;
-
-import java.io.StringReader;
-import java.math.BigDecimal;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import com.tddai.broker.domain.Currency;
+import java.io.StringReader;
+import java.math.BigDecimal;
+import org.junit.jupiter.api.Test;
 
 class CsvStaticDataProviderTest {
 

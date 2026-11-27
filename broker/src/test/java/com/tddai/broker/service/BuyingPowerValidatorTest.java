@@ -1,5 +1,8 @@
 package com.tddai.broker.service;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.tddai.broker.domain.Money;
 import com.tddai.broker.domain.Symbol;
 import com.tddai.broker.domain.order.OrderRequest;
@@ -7,15 +10,11 @@ import com.tddai.broker.domain.order.Side;
 import com.tddai.broker.domain.order.TimeInForce;
 import com.tddai.broker.domain.portfolio.CashBalance;
 import com.tddai.broker.domain.portfolio.Portfolio;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BuyingPowerValidatorTest {
 
@@ -27,13 +26,7 @@ class BuyingPowerValidatorTest {
      * 10 shares at a 235.00 limit: the order can cost at most 2350.00, plus the flat 1.00 fee.
      */
     private static OrderRequest buyTenAtLimit235() {
-        return new OrderRequest(
-                ACCOUNT_ID,
-                Symbol.of("AAPL"),
-                Side.BUY, 10,
-                Money.usd("235.00"),
-                TimeInForce.FOK
-        );
+        return new OrderRequest(ACCOUNT_ID, Symbol.of("AAPL"), Side.BUY, 10, Money.usd("235.00"), TimeInForce.FOK);
     }
 
     private static Portfolio withBalances(CashBalance... balances) {

@@ -1,17 +1,5 @@
 package com.tddai.exchange;
 
-import com.tddai.exchange.config.ExchangeConfig;
-
-import io.javalin.Javalin;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.response.ValidatableResponse;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
@@ -19,9 +7,22 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.tddai.exchange.config.ExchangeConfig;
+import io.javalin.Javalin;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
 /**
  * Tests for: POST /orders endpoint, fill or kill at the same prices that are served as quotes
  */
+@Tag("integration")
 class OrdersTest {
 
     private static final String UNLISTED_SYMBOL = "NOSYM";
@@ -54,8 +55,7 @@ class OrdersTest {
     }
 
     private static ValidatableResponse sendRaw(String body) {
-        return given()
-                .contentType(ContentType.JSON)
+        return given().contentType(ContentType.JSON)
                 .body(body)
                 .when()
                 .post("/orders")
@@ -79,9 +79,7 @@ class OrdersTest {
 
     @Test
     void buyExactlyAtThePriceIsFilled() {
-        send("AAPL", "BUY", "1", "231.42")
-                .statusCode(200)
-                .body("status", equalTo("FILLED"));
+        send("AAPL", "BUY", "1", "231.42").statusCode(200).body("status", equalTo("FILLED"));
     }
 
     @Test
@@ -125,36 +123,26 @@ class OrdersTest {
         String first = send("AAPL", "BUY", "1", "235").extract().path("orderId");
         String second = send("AAPL", "BUY", "1", "235").extract().path("orderId");
 
-       assertNotEquals(first, second);
+        assertNotEquals(first, second);
     }
 
     @ParameterizedTest(name = "symbol=''{0}'' side={1} quantity={2} limitPrice={3}")
-    @CsvSource({
-            "AAPL, HOLD, 1, 100",
-            "AAPL, BUY, 0, 100",
-            "AAPL, BUY, -2, 100",
-            "AAPL, BUY, 1, 0",
-            "'', BUY, 1, 100"
-    })
+    @CsvSource({"AAPL, HOLD, 1, 100", "AAPL, BUY, 0, 100", "AAPL, BUY, -2, 100", "AAPL, BUY, 1, 0", "'', BUY, 1, 100"})
     void aMalformedOrderIsRejectedWithA400(String symbol, String side, String quantity, String limitPrice) {
-        send(symbol, side, quantity, limitPrice)
-                .statusCode(400);
+        send(symbol, side, quantity, limitPrice).statusCode(400);
     }
 
     @Test
     void anOrderWithoutAClientOrderIdIsRejectedWithA400() {
         sendRaw("""
                 {"symbol": "AAPL", "side": "BUY", "quantity": 1, "limitPrice": 100}
-                """)
-                .statusCode(400);
+                """).statusCode(400);
     }
 
     @Test
     void anOrderWithoutAQuantityIsRejectedWithA400() {
         sendRaw("""
                 {"symbol": "AAPL", "side": "BUY", "limitPrice": 100}
-                """)
-                .statusCode(400);
+                """).statusCode(400);
     }
-
 }

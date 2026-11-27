@@ -1,27 +1,26 @@
 package com.tddai.broker.service;
 
-import com.tddai.broker.domain.portfolio.CashBalance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.tddai.broker.domain.Money;
+import com.tddai.broker.domain.Symbol;
 import com.tddai.broker.domain.order.OrderRequest;
-import com.tddai.broker.domain.portfolio.Portfolio;
-import com.tddai.broker.domain.portfolio.Position;
 import com.tddai.broker.domain.order.RejectionReason;
 import com.tddai.broker.domain.order.Side;
-import com.tddai.broker.domain.Symbol;
 import com.tddai.broker.domain.order.TimeInForce;
+import com.tddai.broker.domain.portfolio.CashBalance;
+import com.tddai.broker.domain.portfolio.Portfolio;
+import com.tddai.broker.domain.portfolio.Position;
 import com.tddai.broker.error.InvalidRequestException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OrderValidatorTest {
 
@@ -31,9 +30,8 @@ class OrderValidatorTest {
     private final OrderValidator validator = new OrderValidator();
 
     private static Portfolio portfolioHolding(long aaplQuantity) {
-        List<Position> positions = aaplQuantity == 0
-                ? List.of()
-                : List.of(new Position(AAPL, aaplQuantity, Money.usd("1000")));
+        List<Position> positions =
+                aaplQuantity == 0 ? List.of() : List.of(new Position(AAPL, aaplQuantity, Money.usd("1000")));
         return new Portfolio(ACCOUNT, List.of(CashBalance.usd("0")), positions);
     }
 
@@ -93,12 +91,7 @@ class OrderValidatorTest {
     }
 
     @ParameterizedTest(name = "quantity={0} limitPrice={1}")
-    @CsvSource({
-            "0, 235.00",
-            "-5, 235.00",
-            "1, 0",
-            "1, -1.00"
-    })
+    @CsvSource({"0, 235.00", "-5, 235.00", "1, 0", "1, -1.00"})
     void rejectsANonPositiveQuantityOrLimitPriceAsInvalid(long quantity, String limitPrice) {
         var order = order(Side.BUY, quantity, limitPrice);
         var portfolio = portfolioHolding(0);

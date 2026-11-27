@@ -3,7 +3,6 @@ package com.tddai.broker.http;
 import com.tddai.broker.domain.Currency;
 import com.tddai.broker.error.AccountNotFoundException;
 import com.tddai.broker.error.InvalidRequestException;
-
 import java.util.UUID;
 
 /**
@@ -11,8 +10,7 @@ import java.util.UUID;
  */
 final class Requests {
 
-    private Requests() {
-    }
+    private Requests() {}
 
     /**
      * A malformed id cannot belong to any account, so it is a 404 rather than a 400.

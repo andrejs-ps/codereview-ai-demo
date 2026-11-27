@@ -1,8 +1,5 @@
 package com.tddai.broker.infra;
 
-import org.h2.jdbcx.JdbcDataSource;
-
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -11,6 +8,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
+import javax.sql.DataSource;
+import org.h2.jdbcx.JdbcDataSource;
 
 /**
  * Creates the embedded H2 DataSource and applies schema.sql.
@@ -18,8 +17,7 @@ import java.util.UUID;
  */
 public final class Database {
 
-    private Database() {
-    }
+    private Database() {}
 
     public static DataSource create(String jdbcUrl) {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -43,7 +41,8 @@ public final class Database {
                 throw new IllegalStateException("Missing classpath resource /schema.sql");
             }
             String script = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-            try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
+            try (Connection connection = dataSource.getConnection();
+                    Statement statement = connection.createStatement()) {
                 for (String sql : script.split(";")) {
                     if (!sql.isBlank()) {
                         statement.execute(sql);

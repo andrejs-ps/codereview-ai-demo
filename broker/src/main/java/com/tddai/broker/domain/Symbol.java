@@ -1,7 +1,6 @@
 package com.tddai.broker.domain;
 
 import com.tddai.broker.error.InvalidRequestException;
-
 import java.util.regex.Pattern;
 
 /**

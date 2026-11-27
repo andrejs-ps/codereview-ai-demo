@@ -9,8 +9,7 @@ import java.math.RoundingMode;
  */
 final class Amounts {
 
-    private Amounts() {
-    }
+    private Amounts() {}
 
     static BigDecimal twoDecimals(BigDecimal amount) {
         return amount.setScale(2, RoundingMode.HALF_EVEN);

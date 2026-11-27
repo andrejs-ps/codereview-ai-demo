@@ -1,25 +1,24 @@
 package com.tddai.broker.service;
 
-import com.tddai.broker.domain.Currency;
-import com.tddai.broker.domain.portfolio.CashBalance;
-import com.tddai.broker.domain.Money;
-import com.tddai.broker.domain.order.Order;
-import com.tddai.broker.domain.order.OrderRequest;
-import com.tddai.broker.domain.portfolio.Portfolio;
-import com.tddai.broker.domain.portfolio.Position;
-import com.tddai.broker.domain.order.RejectionReason;
-import com.tddai.broker.domain.order.Side;
-import com.tddai.broker.domain.Symbol;
-import com.tddai.broker.domain.order.TimeInForce;
-import org.junit.jupiter.api.Test;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.tddai.broker.domain.Currency;
+import com.tddai.broker.domain.Money;
+import com.tddai.broker.domain.Symbol;
+import com.tddai.broker.domain.order.Order;
+import com.tddai.broker.domain.order.OrderRequest;
+import com.tddai.broker.domain.order.RejectionReason;
+import com.tddai.broker.domain.order.Side;
+import com.tddai.broker.domain.order.TimeInForce;
+import com.tddai.broker.domain.portfolio.CashBalance;
+import com.tddai.broker.domain.portfolio.Portfolio;
+import com.tddai.broker.domain.portfolio.Position;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class PortfolioUpdaterTest {
 
@@ -98,9 +97,7 @@ class PortfolioUpdaterTest {
         // not reachable once the order is validated upstream; the CashBalance type is the last line of defence
         var before = portfolio(List.of(CashBalance.usd("600.00")), List.of());
 
-        assertThrows(IllegalArgumentException.class,
-                () -> updater.applyFill(before, filled(Side.BUY, 10, "60.00"))
-        );
+        assertThrows(IllegalArgumentException.class, () -> updater.applyFill(before, filled(Side.BUY, 10, "60.00")));
     }
 
     @Test
@@ -108,9 +105,7 @@ class PortfolioUpdaterTest {
         // not reachable once the order is validated upstream; the CashBalance type is the last line of defence
         var before = portfolio(List.of(CashBalance.usd("100"), CashBalance.eur("10000")), List.of());
 
-        assertThrows(IllegalArgumentException.class,
-                () -> updater.applyFill(before, filled(Side.BUY, 10, "60.00"))
-        );
+        assertThrows(IllegalArgumentException.class, () -> updater.applyFill(before, filled(Side.BUY, 10, "60.00")));
     }
 
     // ---- SELL
@@ -178,7 +173,8 @@ class PortfolioUpdaterTest {
 
     @Test
     void sellProceedsNeverGoToEur() {
-        var before = portfolio(List.of(CashBalance.usd("0"), CashBalance.eur("50")),
+        var before = portfolio(
+                List.of(CashBalance.usd("0"), CashBalance.eur("50")),
                 List.of(new Position(AAPL, 10, Money.usd("1000"))));
 
         var after = updater.applyFill(before, filled(Side.SELL, 10, "150.00"));
@@ -203,7 +199,8 @@ class PortfolioUpdaterTest {
         var request = new OrderRequest(ACCOUNT, AAPL, Side.BUY, 1, Money.usd("100"), TimeInForce.FOK);
         var rejected = Order.rejected(request, RejectionReason.INSUFFICIENT_FUNDS);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(
+                IllegalArgumentException.class,
                 () -> updater.applyFill(portfolio(List.of(CashBalance.usd("100")), List.of()), rejected));
     }
 }

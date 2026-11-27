@@ -2,7 +2,6 @@ package com.tddai.broker.domain.portfolio;
 
 import com.tddai.broker.domain.Money;
 import com.tddai.broker.domain.Symbol;
-
 import java.util.Objects;
 
 /**

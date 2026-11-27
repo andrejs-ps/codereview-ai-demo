@@ -1,7 +1,6 @@
 package com.tddai.broker.domain.portfolio;
 
 import com.tddai.broker.domain.Currency;
-
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -30,9 +29,9 @@ public record CashBalance(BigDecimal amount, Currency currency) {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof CashBalance(
-                BigDecimal amount1, Currency currency1
-        ) && currency == currency1 && amount.compareTo(amount1) == 0;
+        return o instanceof CashBalance(BigDecimal amount1, Currency currency1)
+                && currency == currency1
+                && amount.compareTo(amount1) == 0;
     }
 
     @Override

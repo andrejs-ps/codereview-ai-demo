@@ -1,7 +1,6 @@
 package com.tddai.broker.infra;
 
 import com.tddai.broker.domain.Currency;
-
 import java.math.BigDecimal;
 
 /**

@@ -41,8 +41,7 @@ public class QuoteGenerator {
     }
 
     public Optional<QuoteDto> quoteFor(String symbol) {
-        return Optional.ofNullable(PRICES.get(symbol))
-                .map(base -> new QuoteDto(fluctuated(base), clock.instant()));
+        return Optional.ofNullable(PRICES.get(symbol)).map(base -> new QuoteDto(fluctuated(base), clock.instant()));
     }
 
     private BigDecimal fluctuated(BigDecimal base) {

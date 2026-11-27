@@ -1,5 +1,9 @@
 package com.tddai.broker.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.tddai.broker.domain.Currency;
 import com.tddai.broker.domain.Money;
 import com.tddai.broker.domain.Quote;
@@ -22,19 +26,14 @@ import com.tddai.broker.error.ExchangeBadDataException;
 import com.tddai.broker.error.ExchangeTimeoutException;
 import com.tddai.broker.infra.ExchangeClient;
 import com.tddai.broker.support.InMemoryPortfolioStore;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class OrderServiceTest {
 
@@ -80,10 +79,15 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new OrderService(store, new OrderValidator(), new BuyingPowerValidator(Money.usd("1.00")), exchange,
+        service = new OrderService(
+                store,
+                new OrderValidator(),
+                new BuyingPowerValidator(Money.usd("1.00")),
+                exchange,
                 new PortfolioUpdater(Money.usd("1.00")));
         accountId = UUID.randomUUID();
-        store.createAccount(new Account(accountId, new Investor(UUID.randomUUID(), "Ada")),
+        store.createAccount(
+                new Account(accountId, new Investor(UUID.randomUUID(), "Ada")),
                 new Portfolio(accountId, List.of(CashBalance.usd("5000")), List.of()));
     }
 
@@ -92,7 +96,8 @@ class OrderServiceTest {
     }
 
     private void holding(long quantity, String costBasis) {
-        store.seed(store.findPortfolio(accountId).orElseThrow()
+        store.seed(store.findPortfolio(accountId)
+                .orElseThrow()
                 .withPosition(new Position(AAPL, quantity, Money.usd(costBasis))));
     }
 
@@ -125,7 +130,9 @@ class OrderServiceTest {
 
         Portfolio saved = store.findPortfolio(accountId).orElseThrow();
         assertEquals(CashBalance.usd("2684.80"), saved.cashBalance(Currency.USD).orElseThrow());
-        assertEquals(new Position(AAPL, 10, Money.usd("2314.20")), saved.position(AAPL).orElseThrow());
+        assertEquals(
+                new Position(AAPL, 10, Money.usd("2314.20")),
+                saved.position(AAPL).orElseThrow());
         assertEquals(1, store.saveCount());
     }
 
@@ -198,8 +205,8 @@ class OrderServiceTest {
 
     @Test
     void aSellWithNoUsdCashGoesThroughAndThePortfolioPaysTheFeeFromTheProceeds() {
-        store.seed(new Portfolio(accountId, List.of(CashBalance.usd("0")),
-                List.of(new Position(AAPL, 10, Money.usd("1000")))));
+        store.seed(new Portfolio(
+                accountId, List.of(CashBalance.usd("0")), List.of(new Position(AAPL, 10, Money.usd("1000")))));
         exchange.fillsAt("150.00");
 
         Order result = service.placeOrder(order(Side.SELL, 4, "145.00"));

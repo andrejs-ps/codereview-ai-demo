@@ -1,5 +1,7 @@
 package com.tddai.broker.support;
 
+import static io.restassured.RestAssured.given;
+
 import com.tddai.broker.BrokerApp;
 import com.tddai.broker.config.BrokerConfig;
 import com.tddai.broker.infra.Database;
@@ -7,19 +9,18 @@ import io.javalin.Javalin;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.math.BigDecimal;
 import java.time.Duration;
-
-import static io.restassured.RestAssured.given;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Starts the real broker (in-memory H2, random port) wired to a programmable {@link StubExchange},
  * and points RestAssured at it.
  * Subclasses talk to the broker over real HTTP.
  */
+@Tag("integration")
 public abstract class BrokerIntegrationTest {
 
     protected StubExchange exchange;
@@ -35,8 +36,8 @@ public abstract class BrokerIntegrationTest {
     @BeforeEach
     void startBrokerAndStubExchange() {
         exchange = new StubExchange();
-        broker = BrokerApp.start(new BrokerConfig(0, exchange.url(), exchangeTimeout(),
-                Database.uniqueInMemoryUrl(), new BigDecimal("1.00")));
+        broker = BrokerApp.start(new BrokerConfig(
+                0, exchange.url(), exchangeTimeout(), Database.uniqueInMemoryUrl(), new BigDecimal("1.00")));
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = broker.port();
     }
@@ -48,8 +49,7 @@ public abstract class BrokerIntegrationTest {
     }
 
     protected static ValidatableResponse post(String path, String jsonBody) {
-        return given()
-                .contentType(ContentType.JSON)
+        return given().contentType(ContentType.JSON)
                 .body(jsonBody)
                 .when()
                 .post(path)
@@ -61,12 +61,12 @@ public abstract class BrokerIntegrationTest {
                 {"investorName": "%s"}
                 """.formatted(investorName))
                 .statusCode(201)
-                .extract().path("accountId");
+                .extract()
+                .path("accountId");
     }
 
     protected static void deposit(String accountId, String currency, String amount) {
-        postDeposit(accountId, currency, amount)
-                .statusCode(200);
+        postDeposit(accountId, currency, amount).statusCode(200);
     }
 
     protected static ValidatableResponse postDeposit(String accountId, String currency, String amount) {
